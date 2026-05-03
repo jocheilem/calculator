@@ -1,0 +1,185 @@
+print("Welcome to the calculator!")
+print("Note: decimals will be rounded to the nearest 2 decimal places")
+
+def calculator():
+    max_limit = 10 ** 15
+    max_exponent = 100
+    while True:
+        a = input("Please enter the first number: ").strip()
+        if a == "":
+            print("Warning: You entered an empty value. Please enter a valid number.")
+        elif a.replace('.', '', 1).isdigit() or (a[0] == '-' or '+' and a[1:].replace('.', '', 1).isdigit()):
+            a = float(a)
+            break
+        else:
+            print("Invalid input! Please enter a valid number.")
+
+    print("Please select an operation:")
+    print("1. Addition")
+    print("2. Subtraction")
+    print("3. Multiplication")
+    print("4. Division")
+    print("5. Exponent")
+    print("6. Square root")
+    print("7. Percentage")
+    
+    choice = input("Input the number (1, 2, 3, 4, 5, 6, 7): ")
+
+    
+    if choice == "6":
+        if a < 0:
+            print("Warning: You cannot calculate the square root of a negative number.")
+            while True:
+                a = input("Please enter a valid positive number: ").strip()
+                if a == "":
+                    print("Warning: You entered an empty value. Please enter a valid number.")
+                elif a.replace('.', '', 1).isdigit() or (a[0] == '-' or '+' and a[1:].replace('.', '', 1).isdigit()):
+                    a = float(a)
+                    if a >= 0:
+                        break
+                    else:
+                         print("Warning: You cannot calculate the square root of a negative number.")
+                else:
+                    print("Invalid input! Please enter a valid number.")
+        print("The answer to √", a, "is", round(a**0.5, 2))
+        return
+    
+    while choice not in ["1", "2", "3", "4", "5", "6", "7"]:
+        print("Sorry, but that is not a valid operation.")
+        print("Your first number is", a)
+        print("Please select an operation:")
+        print("1. Addition")
+        print("2. Subtraction")
+        print("3. Multiplication")
+        print("4. Division")
+        print("5. Exponent")
+        print("6. Square root")
+        print("7. Percentage")
+        choice = input("Input the number (1, 2, 3, 4, 5, 6, 7): ")
+        
+        if choice == "6":
+            if a < 0:
+                print("Warning: You cannot calculate the square root of a negative number.")
+                while True:
+                    a = input("Please enter a valid positive number: ").strip()
+                    if a == "":
+                        print("Warning: You entered an empty value. Please enter a valid number.")
+                    elif a.replace('.', '', 1).isdigit() or (a[0] == '-' or '+' and a[1:].replace('.', '', 1).isdigit()):
+                        a = float(a)
+                        if a >= 0:
+                            break
+                        else:
+                            print("Warning: You cannot calculate the square root of a negative number.")
+                    else:
+                        print("Invalid input! Please enter a valid number.")
+            print("The answer to √", a, "is", round(a**0.5, 2))
+            return
+
+    
+    while True:
+        b = input("Please enter the second number: ").strip()
+        if b == "":
+            print("Warning: You entered an empty value. Please enter a valid number.")
+        elif b.replace('.', '', 1).isdigit() or (b[0] == '-' or '+' and b[1:].replace('.', '', 1).isdigit()):
+            b = float(b)
+            break
+        else:
+            print("Invalid input! Please enter a valid number.")
+
+    if choice == "1":
+        print("The answer to", a, "+", b, "is", round(a + b, 2))
+    elif choice == "2":
+        print("The answer to", a, "-", b, "is", round(a - b, 2))
+    elif choice == "3":
+        while abs(a * b) > max_limit:
+            print("Error: The product is too high.")
+            while True:
+                b = input("Please enter the second number: ").strip()
+                if b == "":
+                    print("Warning: You entered an empty value. Please enter a valid number.")
+                elif b.replace('.', '', 1).isdigit() or (b[0] == '-' and b[1:].replace('.', '', 1).isdigit()):
+                    b = float(b)
+                    if abs(b) > max_limit:
+                        print("Error: The number is too large. Please enter a smaller number.")
+                        continue
+                    break
+                else:
+                    print("Invalid input! Please enter a valid number.")
+        print("The answer to", a, "×", b, "is", round(a * b, 2))
+    elif choice == "4":
+        while b == 0:
+            print("Error: Division by zero.")
+            while True:
+                b = input("Please enter the second number: ")
+                if b.replace('.', '', 1).isdigit() or (b[0] == '-' and b[1:].replace('.', '', 1).isdigit()):
+                    b = float(b)
+                    break
+                else:
+                    print("Invalid input! Please enter a valid number.")
+        if b != 0:
+            print("The answer to", a, "÷", b, "is", round(a / b, 2))
+
+    elif choice == "5":
+        while True:
+            if abs(b) > max_exponent:
+                print("Error: The exponent is too high.")
+                while True:
+                    b = input("Please enter a smaller exponent: ").strip()
+                    if b == "":
+                        print("Warning: You entered an empty value. Please enter a valid number.")
+                    elif b.replace('.', '', 1).isdigit() or (b[0] == '-' and b[1:].replace('.', '', 1).isdigit()):
+                        b = float(b)
+                        if abs(b) > max_limit:
+                            print("Error: The number is too large. Please enter a smaller number.")
+                            continue
+                        break
+                    else:
+                        print("Invalid input! Please enter a valid number.")
+            elif abs(a ** b) > max_limit:
+                print("Error: The result of the exponentiation is too large.")
+                while True:
+                    a = input("Please enter the base number: ").strip()
+                    if a == "":
+                        print("Warning: You entered an empty value. Please enter a valid number.")
+                    elif a.replace('.', '', 1).isdigit() or (a[0] == '-' and a[1:].replace('.', '', 1).isdigit()):
+                        a = float(a)
+                        if abs(a) > max_limit:
+                            print("Error: The number is too large. Please enter a smaller number.")
+                            continue
+                        break
+                    else:
+                        print("Invalid input! Please enter a valid number.")
+            else:
+                break
+        print("The answer to", a, "^", b, "is", round(a ** b, 2))
+
+    elif choice == "7":
+        while b == 0:
+            print("Error: Division by zero.")
+            while True:
+                b = input("Please enter the second number: ")
+                if b.replace('.', '', 1).isdigit() or (b[0] == '-' and b[1:].replace('.', '', 1).isdigit()):
+                    b = float(b)
+                    break
+                else:
+                    print("Invalid input! Please enter a valid number.")
+        if b != 0:
+            print("The percentage of", a, "to", b, "is", str(round(a / b * 100, 2)) +"%")
+
+def main():
+    while True:
+        calculator()
+        while True:
+            exit = input("-press 0 to exit- or -press 1 to restart-")
+            if exit in ["0", "1"]:
+                break
+            else:
+                print("Invalid request!")
+        
+        if exit == "0":
+            print("Exiting calculator...")
+            break
+        elif exit == "1":
+            print("Welcome back!")
+
+main()
