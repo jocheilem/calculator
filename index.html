@@ -1,185 +1,192 @@
-print("Welcome to the calculator!")
-print("Note: decimals will be rounded to the nearest 2 decimal places")
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Python Logic Calculator</title>
+    <style>
+        body { background-color: #0c0c0c; color: #cccccc; font-family: 'Courier New', Courier, monospace; display: flex; justify-content: center; padding: 20px; }
+        #terminal { background: #000; width: 100%; max-width: 600px; padding: 20px; border: 1px solid #444; border-radius: 5px; min-height: 400px; box-shadow: 0 0 15px rgba(0,255,0,0.1); }
+        .input-line { display: flex; margin-top: 10px; color: #00ff00; }
+        input { background: transparent; border: none; color: #00ff00; outline: none; font-family: inherit; font-size: 16px; width: 100%; }
+        .output { white-space: pre-wrap; margin-bottom: 5px; }
+        .warning { color: #ffcc00; }
+        .error { color: #ff3333; }
+    </style>
+</head>
+<body>
 
-def calculator():
-    max_limit = 10 ** 15
-    max_exponent = 100
-    while True:
-        a = input("Please enter the first number: ").strip()
-        if a == "":
-            print("Warning: You entered an empty value. Please enter a valid number.")
-        elif a.replace('.', '', 1).isdigit() or (a[0] == '-' or '+' and a[1:].replace('.', '', 1).isdigit()):
-            a = float(a)
-            break
-        else:
-            print("Invalid input! Please enter a valid number.")
+<div id="terminal">
+    <div id="history"></div>
+    <div class="input-line">
+        <span id="prompt">> </span>
+        <input type="text" id="userInput" autofocus autocomplete="off">
+    </div>
+</div>
 
-    print("Please select an operation:")
-    print("1. Addition")
-    print("2. Subtraction")
-    print("3. Multiplication")
-    print("4. Division")
-    print("5. Exponent")
-    print("6. Square root")
-    print("7. Percentage")
-    
-    choice = input("Input the number (1, 2, 3, 4, 5, 6, 7): ")
+<script>
+    const history = document.getElementById('history');
+    const input = document.getElementById('userInput');
+    const prompt = document.getElementById('prompt');
 
-    
-    if choice == "6":
-        if a < 0:
-            print("Warning: You cannot calculate the square root of a negative number.")
-            while True:
-                a = input("Please enter a valid positive number: ").strip()
-                if a == "":
-                    print("Warning: You entered an empty value. Please enter a valid number.")
-                elif a.replace('.', '', 1).isdigit() or (a[0] == '-' or '+' and a[1:].replace('.', '', 1).isdigit()):
-                    a = float(a)
-                    if a >= 0:
-                        break
-                    else:
-                         print("Warning: You cannot calculate the square root of a negative number.")
-                else:
-                    print("Invalid input! Please enter a valid number.")
-        print("The answer to √", a, "is", round(a**0.5, 2))
-        return
-    
-    while choice not in ["1", "2", "3", "4", "5", "6", "7"]:
-        print("Sorry, but that is not a valid operation.")
-        print("Your first number is", a)
-        print("Please select an operation:")
-        print("1. Addition")
-        print("2. Subtraction")
-        print("3. Multiplication")
-        print("4. Division")
-        print("5. Exponent")
-        print("6. Square root")
-        print("7. Percentage")
-        choice = input("Input the number (1, 2, 3, 4, 5, 6, 7): ")
+    let state = "START"; 
+    let a, b, choice;
+    const max_limit = 10 ** 15;
+    const max_exponent = 100;
+
+    function print(text, type = "") {
+        const div = document.createElement('div');
+        div.className = "output " + type;
+        div.innerText = text;
+        history.appendChild(div);
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function init() {
+        print("Welcome to the calculator!");
+        print("Note: decimals will be rounded to the nearest 2 decimal places");
+        askFirstNumber();
+    }
+
+    function askFirstNumber() {
+        print("Please enter the first number: ");
+        state = "GET_A";
+    }
+
+    function askOperation() {
+        print("Please select an operation:");
+        print("1. Addition\n2. Subtraction\n3. Multiplication\n4. Division\n5. Exponent\n6. Square root\n7. Percentage");
+        print("Input the number (1, 2, 3, 4, 5, 6, 7): ");
+        state = "GET_CHOICE";
+    }
+
+    function handleInput(val) {
+        print("> " + val, "user-input");
+        val = val.trim();
+
+        if (state === "GET_A") {
+            if (val === "") {
+                print("Warning: You entered an empty value. Please enter a valid number.", "warning");
+            } else if (!isNaN(val)) {
+                a = parseFloat(val);
+                askOperation();
+            } else {
+                print("Invalid input! Please enter a valid number.", "error");
+            }
+        } 
         
-        if choice == "6":
-            if a < 0:
-                print("Warning: You cannot calculate the square root of a negative number.")
-                while True:
-                    a = input("Please enter a valid positive number: ").strip()
-                    if a == "":
-                        print("Warning: You entered an empty value. Please enter a valid number.")
-                    elif a.replace('.', '', 1).isdigit() or (a[0] == '-' or '+' and a[1:].replace('.', '', 1).isdigit()):
-                        a = float(a)
-                        if a >= 0:
-                            break
-                        else:
-                            print("Warning: You cannot calculate the square root of a negative number.")
-                    else:
-                        print("Invalid input! Please enter a valid number.")
-            print("The answer to √", a, "is", round(a**0.5, 2))
-            return
+        else if (state === "GET_CHOICE") {
+            if (["1", "2", "3", "4", "5", "6", "7"].includes(val)) {
+                choice = val;
+                if (choice === "6") {
+                    handleSquareRoot();
+                } else {
+                    print("Please enter the second number: ");
+                    state = "GET_B";
+                }
+            } else {
+                print("Sorry, but that is not a valid operation.", "error");
+                print("Your first number is " + a);
+                askOperation();
+            }
+        }
 
-    
-    while True:
-        b = input("Please enter the second number: ").strip()
-        if b == "":
-            print("Warning: You entered an empty value. Please enter a valid number.")
-        elif b.replace('.', '', 1).isdigit() or (b[0] == '-' or '+' and b[1:].replace('.', '', 1).isdigit()):
-            b = float(b)
-            break
-        else:
-            print("Invalid input! Please enter a valid number.")
+        else if (state === "GET_B") {
+            if (val === "") {
+                print("Warning: You entered an empty value. Please enter a valid number.", "warning");
+            } else if (!isNaN(val)) {
+                b = parseFloat(val);
+                performCalculation();
+            } else {
+                print("Invalid input! Please enter a valid number.", "error");
+            }
+        }
 
-    if choice == "1":
-        print("The answer to", a, "+", b, "is", round(a + b, 2))
-    elif choice == "2":
-        print("The answer to", a, "-", b, "is", round(a - b, 2))
-    elif choice == "3":
-        while abs(a * b) > max_limit:
-            print("Error: The product is too high.")
-            while True:
-                b = input("Please enter the second number: ").strip()
-                if b == "":
-                    print("Warning: You entered an empty value. Please enter a valid number.")
-                elif b.replace('.', '', 1).isdigit() or (b[0] == '-' and b[1:].replace('.', '', 1).isdigit()):
-                    b = float(b)
-                    if abs(b) > max_limit:
-                        print("Error: The number is too large. Please enter a smaller number.")
-                        continue
-                    break
-                else:
-                    print("Invalid input! Please enter a valid number.")
-        print("The answer to", a, "×", b, "is", round(a * b, 2))
-    elif choice == "4":
-        while b == 0:
-            print("Error: Division by zero.")
-            while True:
-                b = input("Please enter the second number: ")
-                if b.replace('.', '', 1).isdigit() or (b[0] == '-' and b[1:].replace('.', '', 1).isdigit()):
-                    b = float(b)
-                    break
-                else:
-                    print("Invalid input! Please enter a valid number.")
-        if b != 0:
-            print("The answer to", a, "÷", b, "is", round(a / b, 2))
+        else if (state === "RESTART_OR_EXIT") {
+            if (val === "0") {
+                print("Exiting calculator...");
+                input.disabled = true;
+            } else if (val === "1") {
+                print("Welcome back!");
+                askFirstNumber();
+            } else {
+                print("Invalid request!", "error");
+                print("-press 0 to exit- or -press 1 to restart-");
+            }
+        }
+    }
 
-    elif choice == "5":
-        while True:
-            if abs(b) > max_exponent:
-                print("Error: The exponent is too high.")
-                while True:
-                    b = input("Please enter a smaller exponent: ").strip()
-                    if b == "":
-                        print("Warning: You entered an empty value. Please enter a valid number.")
-                    elif b.replace('.', '', 1).isdigit() or (b[0] == '-' and b[1:].replace('.', '', 1).isdigit()):
-                        b = float(b)
-                        if abs(b) > max_limit:
-                            print("Error: The number is too large. Please enter a smaller number.")
-                            continue
-                        break
-                    else:
-                        print("Invalid input! Please enter a valid number.")
-            elif abs(a ** b) > max_limit:
-                print("Error: The result of the exponentiation is too large.")
-                while True:
-                    a = input("Please enter the base number: ").strip()
-                    if a == "":
-                        print("Warning: You entered an empty value. Please enter a valid number.")
-                    elif a.replace('.', '', 1).isdigit() or (a[0] == '-' and a[1:].replace('.', '', 1).isdigit()):
-                        a = float(a)
-                        if abs(a) > max_limit:
-                            print("Error: The number is too large. Please enter a smaller number.")
-                            continue
-                        break
-                    else:
-                        print("Invalid input! Please enter a valid number.")
-            else:
-                break
-        print("The answer to", a, "^", b, "is", round(a ** b, 2))
+    function handleSquareRoot() {
+        if (a < 0) {
+            print("Warning: You cannot calculate the square root of a negative number.", "warning");
+            print("Please enter a valid positive number: ");
+            state = "GET_A"; // Return to A to get a positive one
+        } else {
+            print("The answer to √ " + a + " is " + Math.round(Math.sqrt(a) * 100) / 100);
+            askRestart();
+        }
+    }
 
-    elif choice == "7":
-        while b == 0:
-            print("Error: Division by zero.")
-            while True:
-                b = input("Please enter the second number: ")
-                if b.replace('.', '', 1).isdigit() or (b[0] == '-' and b[1:].replace('.', '', 1).isdigit()):
-                    b = float(b)
-                    break
-                else:
-                    print("Invalid input! Please enter a valid number.")
-        if b != 0:
-            print("The percentage of", a, "to", b, "is", str(round(a / b * 100, 2)) +"%")
+    function performCalculation() {
+        let result;
+        if (choice === "1") result = a + b;
+        if (choice === "2") result = a - b;
+        if (choice === "3") {
+            if (Math.abs(a * b) > max_limit) {
+                print("Error: The product is too high.", "error");
+                print("Please enter the second number: ");
+                return;
+            }
+            result = a * b;
+        }
+        if (choice === "4") {
+            if (b === 0) {
+                print("Error: Division by zero.", "error");
+                print("Please enter the second number: ");
+                return;
+            }
+            result = a / b;
+        }
+        if (choice === "5") {
+            if (Math.abs(b) > max_exponent || Math.abs(Math.pow(a, b)) > max_limit) {
+                print("Error: The exponent or result is too high.", "error");
+                print("Please enter the base number: ");
+                state = "GET_A";
+                return;
+            }
+            result = Math.pow(a, b);
+        }
+        if (choice === "7") {
+            if (b === 0) {
+                print("Error: Division by zero.", "error");
+                print("Please enter the second number: ");
+                return;
+            }
+            result = (a / b * 100).toFixed(2) + "%";
+            print("The percentage of " + a + " to " + b + " is " + result);
+            askRestart();
+            return;
+        }
 
-def main():
-    while True:
-        calculator()
-        while True:
-            exit = input("-press 0 to exit- or -press 1 to restart-")
-            if exit in ["0", "1"]:
-                break
-            else:
-                print("Invalid request!")
-        
-        if exit == "0":
-            print("Exiting calculator...")
-            break
-        elif exit == "1":
-            print("Welcome back!")
+        const opMap = {"1":"+", "2":"-", "3":"×", "4":"÷", "5":"^"};
+        print("The answer to " + a + " " + opMap[choice] + " " + b + " is " + Math.round(result * 100) / 100);
+        askRestart();
+    }
 
-main()
+    function askRestart() {
+        print("-press 0 to exit- or -press 1 to restart-");
+        state = "RESTART_OR_EXIT";
+    }
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const val = input.value;
+            input.value = "";
+            handleInput(val);
+        }
+    });
+
+    init();
+</script>
+
+</body>
+</html>
